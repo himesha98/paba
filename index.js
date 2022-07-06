@@ -39,33 +39,26 @@ app.post("/createuser", async (req, res) => {
 });
 
 
-app.get("/getusers", async (err, res) => {
+app.get("/getusers", function (req, res) {
     let userList = [];
-    try {
-        let users = await User.find((err, results) => {
-
-            //console.log(results);
-            return results;
-            /*results.forEach(user => {
-                const fetcheduser = {
-                    "userid": user.userid,
-                    "firstname": user.firstname,
-                    "lastname": user.lastname
-                };
+    User.find({}, function (err, data) {
+        if (!err) {
+            data.map((user)=> {
+                const fetcheduser ={
+                    "firstname" :user.firstname,
+                    "lastname":user.lastname,
+                    "userid":user.userid
+                }
                 userList.push(fetcheduser);
-            });*/
+            })
+            res.status(200).json(userList);
+        } else {
+            throw err;
+        }
+    }).clone().catch(
+        function(err){ 
+            console.log(err);
         });
-        console.log(err); 
-        //return res.status(200).send(users);
-
-
-        console.log(users);
-        res.status(200).json(userList);
-
-
-    } catch (err) {
-        res.status(500).json(err);
-    }
 });
 
 app.listen(8800, () => {
